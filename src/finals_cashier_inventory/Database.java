@@ -74,7 +74,7 @@ public class Database{
         }
     }
 
-  public static String replaceWildcards(String query, Object... keyValues) {
+  public String replaceWildcards(String query, Object... keyValues) {
     if (keyValues.length % 2 != 0) {
         throw new IllegalArgumentException("Number of key-value pairs must be even.");
     }
@@ -90,7 +90,7 @@ public class Database{
         } else if (replacement instanceof Float) {
             query = query.replace(wildcard, String.valueOf((Float) replacement));
         } else {
-            throw new TypeError("Replacement must be a String, Integer, or Float.");
+            System.out.println("Error");
         }
     }
 

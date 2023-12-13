@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.ToggleButton;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -346,7 +345,7 @@ public class User extends javax.swing.JFrame {
        }
        
         DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
-        
+        tablemodel.setRowCount(0);
         String sql = "SELECT * FROM inv WHERE pname = '{pname}' ";
         String translatedsql = db.replaceWildcards(sql, "{pname}", selectedTxt);
         
@@ -366,6 +365,7 @@ public class User extends javax.swing.JFrame {
             System.out.println(e);
     }
         
+        /*
         
         SpinnerNumberModel model = new SpinnerNumberModel(1, 1, 10, 1);
         JSpinner spinner = new JSpinner(model);
@@ -389,7 +389,7 @@ public class User extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        */
 
     }//GEN-LAST:event_btnaddActionPerformed
 

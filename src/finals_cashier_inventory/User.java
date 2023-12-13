@@ -41,7 +41,8 @@ public class User extends javax.swing.JFrame {
     private Object resultSet;
     private ButtonGroup buttonGroup;
     private Object frame;
-     
+    ShoppingList cart = new ShoppingList();
+ 
    
     /**
      * Creates new form User
@@ -50,6 +51,7 @@ public class User extends javax.swing.JFrame {
     
     public User() throws SQLException {
         initComponents();
+
         //ButtonGroup buttonGroup = new ButtonGroup();
         int count = 0;
         
@@ -328,7 +330,32 @@ public class User extends javax.swing.JFrame {
     }                                      
 
     private void btnremoveActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        // TODO add your handling code here:
+        String selectedTxt=null;
+        Enumeration <AbstractButton> elements = buttonGroup.getElements();
+        
+       while(elements.hasMoreElements()){
+           AbstractButton model = elements.nextElement();
+           
+           if(model.isSelected()){
+               selectedTxt = model.getActionCommand();
+           }
+       }
+           cart.removeProduct(selectedTxt);
+           DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
+            tablemodel.setRowCount(0);
+        
+            List<Map<String, Object>> products = cart.getAllProducts();
+                for (int i = 0; i < products.size(); i++){
+                   Map<String, Object> product = products.get(i);
+                   Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
+                   tablemodel.addRow(row);
+                }
+                jLabel8.setText(Double.toString(cart.getTotalPrice()));
+
+
+
+
+
     }                                         
 
     private void btnaddActionPerformed(java.awt.event.ActionEvent evt) {                                       
@@ -346,7 +373,6 @@ public class User extends javax.swing.JFrame {
            }
        }
        
-       ShoppingList cart = new ShoppingList();
        
         DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
         tablemodel.setRowCount(0);
@@ -365,7 +391,7 @@ public class User extends javax.swing.JFrame {
                 
                  if(cart.isExisting(result.getString("pname"))){
                 Map<String, Object> current_product = cart.getProduct(result.getString("pname"));
-                int newQuantity = Integer.parseInt(current_product.get("pqty").toString()) + Integer.parseInt((String) btnqty.getValue());
+                int newQuantity = Integer.parseInt(current_product.get("pqty").toString()) + (int)(btnqty.getValue());
                 cart.updateQuantity(result.getString("pname"), newQuantity);
                 List<Map<String, Object>> products = cart.getAllProducts();
                 for (int i = 0; i < products.size(); i++){
@@ -377,7 +403,7 @@ public class User extends javax.swing.JFrame {
                 System.out.println("Product quantity updated successfully!");
             }
             else{
-                cart.addProduct(result.getString("pname"),(String) btnqty.getValue(), result.getString("pprice"));
+                cart.addProduct(result.getString("pname"),Integer.toString((int) btnqty.getValue()) , result.getString("pprice"));
                 
                 List<Map<String, Object>> products = cart.getAllProducts();
                 for (int i = 0; i < products.size(); i++){
@@ -388,6 +414,8 @@ public class User extends javax.swing.JFrame {
             }
                 
             }
+            //
+            jLabel8.setText(Double.toString(cart.getTotalPrice()));
          }
         catch (SQLException e){
             System.out.println(e);

@@ -71,7 +71,7 @@ public class ShoppingList {
     public double getTotalPrice() {
         double totalPrice = 0;
         for (Map<String, Object> item : items) {
-            totalPrice += (double) item.get("pqty") * (double) item.get("pprice");
+            totalPrice += Double.parseDouble((String)item.get("pqty"))  * Double.parseDouble((String)item.get("pprice"));
         }
         return totalPrice;
     }

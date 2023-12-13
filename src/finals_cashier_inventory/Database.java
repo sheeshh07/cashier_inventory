@@ -74,18 +74,29 @@ public class Database{
         }
     }
 
-    public String replaceWildcards(String query, String... keyValues) {
-        if (keyValues.length % 2 != 0) {
-            throw new IllegalArgumentException("Number of key-value pairs must be even.");
-        }
-
-        for (int i = 0; i < keyValues.length; i += 2) {
-            String wildcard = keyValues[i];
-            String replacement = keyValues[i + 1];
-            query = query.replace(wildcard, replacement);
-        }
-        return query;
+  public static String replaceWildcards(String query, Object... keyValues) {
+    if (keyValues.length % 2 != 0) {
+        throw new IllegalArgumentException("Number of key-value pairs must be even.");
     }
+
+    for (int i = 0; i < keyValues.length; i += 2) {
+        String wildcard = (String) keyValues[i];
+        Object replacement = keyValues[i + 1];
+
+        if (replacement instanceof String) {
+            query = query.replace(wildcard, (String) replacement);
+        } else if (replacement instanceof Integer) {
+            query = query.replace(wildcard, String.valueOf((Integer) replacement));
+        } else if (replacement instanceof Float) {
+            query = query.replace(wildcard, String.valueOf((Float) replacement));
+        } else {
+            throw new TypeError("Replacement must be a String, Integer, or Float.");
+        }
+    }
+
+    return query;
+}
+
     
     
     

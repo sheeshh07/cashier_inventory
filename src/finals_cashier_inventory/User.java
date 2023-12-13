@@ -360,26 +360,31 @@ public class User extends javax.swing.JFrame {
                 
                // tablemodel.addRow(row);
                
-                List<Map<String, Object>> products = cart.getAllProducts();
-                for (int i = 0; i < products.size(); i++){
-                   Map<String, Object> product = products.get(i);
-                   Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
-                   tablemodel.addRow(row);
-                }
+                
        
                 
                  if(cart.isExisting(result.getString("pname"))){
                 Map<String, Object> current_product = cart.getProduct(result.getString("pname"));
                 int newQuantity = Integer.parseInt(current_product.get("pqty").toString()) + Integer.parseInt((String) btnqty.getValue());
                 cart.updateQuantity(result.getString("pname"), newQuantity);
-                
-                String update = "UPDATE inv SET pqty = '{pqty}'";
-                
+                List<Map<String, Object>> products = cart.getAllProducts();
+                for (int i = 0; i < products.size(); i++){
+                   Map<String, Object> product = products.get(i);
+                   Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
+                   tablemodel.addRow(row);
+                }
 
                 System.out.println("Product quantity updated successfully!");
             }
             else{
-                cart.addProduct(result.getString("pname"),"0", result.getString("pprice"));
+                cart.addProduct(result.getString("pname"),(String) btnqty.getValue(), result.getString("pprice"));
+                
+                List<Map<String, Object>> products = cart.getAllProducts();
+                for (int i = 0; i < products.size(); i++){
+                   Map<String, Object> product = products.get(i);
+                   Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
+                   tablemodel.addRow(row);
+                }
             }
                 
             }

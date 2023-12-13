@@ -344,6 +344,8 @@ public class User extends javax.swing.JFrame {
            }
        }
        
+       ShoppingList cart = new ShoppingList();
+       
         DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
         tablemodel.setRowCount(0);
         String sql = "SELECT * FROM inv WHERE pname = '{pname}' ";
@@ -359,6 +361,8 @@ public class User extends javax.swing.JFrame {
                     row[i-1] = result.getObject(i);
             }
                 tablemodel.addRow(row);
+               
+                
             }
          }
         catch (SQLException e){

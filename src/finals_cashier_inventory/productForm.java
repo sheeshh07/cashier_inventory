@@ -315,13 +315,16 @@ public class productForm extends javax.swing.JFrame {
             DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
             
             tableModel.setRowCount(0);
-            //tableModel.
+            
             
             while(result.next())
             {
                 System.out.println("ping");
             Object[] rowData = {result.getString("pid"),result.getString("pname"),result.getString("pprice"),result.getString("pqty")};
-            tableModel.addRow(rowData);         
+            tableModel.addRow(rowData);  
+            
+            
+            
             }
         }  
     }

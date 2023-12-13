@@ -12,7 +12,7 @@ public class ShoppingList {
 
     private List<Map<String, Object>> items;
 
-    public ShoppingList {
+    public ShoppingList() {
         this.items = new ArrayList<>();
     }
 
@@ -39,11 +39,23 @@ public class ShoppingList {
         return null;
     }
 
+    
+    
+    
+    public boolean isExisting (String name) {
+        for (Map<String, Object> item : items) {
+            if (item.get("pname").equals(name)) {
+                return true;
+            }
+            
+        }
+        return false;
+    }
     // Update
     public void updateQuantity(String name, int quantity) {
         for (Map<String, Object> item : items) {
             if (item.get("pname").equals(name)) {
-                item.put("pqty", quantity);
+                item.put("pqty", Integer.toString(quantity));
                 return;
             }
         }

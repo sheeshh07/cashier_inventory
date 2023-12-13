@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractButton;
@@ -355,13 +357,30 @@ public class User extends javax.swing.JFrame {
         
         try{ 
             while (result.next()){
-                Object[] row = new Object[4];
+                
                // tablemodel.addRow(row);
-                for (int i = 1; i <= 4; i++) {
-                    row[i-1] = result.getObject(i);
-            }
-                tablemodel.addRow(row);
                
+                List<Map<String, Object>> products = cart.getAllProducts();
+                for (int i = 0; i < products.size(); i++){
+                   Map<String, Object> product = products.get(i);
+                   Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
+                   tablemodel.addRow(row);
+                }
+       
+                
+                 if(cart.isExisting(result.getString("pname"))){
+                Map<String, Object> current_product = cart.getProduct(result.getString("pname"));
+                int newQuantity = Integer.parseInt(current_product.get("pqty").toString()) + Integer.parseInt((String) btnqty.getValue());
+                cart.updateQuantity(result.getString("pname"), newQuantity);
+                
+                String update = "UPDATE inv SET pqty = '{pqty}'";
+                
+
+                System.out.println("Product quantity updated successfully!");
+            }
+            else{
+                cart.addProduct(result.getString("pname"),"0", result.getString("pprice"));
+            }
                 
             }
          }

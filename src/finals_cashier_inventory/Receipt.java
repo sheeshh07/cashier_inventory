@@ -1,6 +1,7 @@
 
 package finals_cashier_inventory;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ public class Receipt extends javax.swing.JFrame {
 
     public Receipt(String change, String payment, ShoppingList cart) {
         initComponents();
+        Database db = new Database();
+        db.connect();
         
         DefaultTableModel tablemodel = (DefaultTableModel) rcpt_table.getModel();
         tablemodel.setRowCount(0);
@@ -20,9 +23,37 @@ public class Receipt extends javax.swing.JFrame {
                 
                 List<Map<String, Object>> products = cart.getAllProducts();
                 for (int i = 0; i < products.size(); i++){
-                   Map<String, Object> product = products.get(i);
-                   Object[] row = {product.get("pname"), product.get("pprice"), product.get("pqty")};
-                   tablemodel.addRow(row);
+                    
+                    
+            try {
+
+                
+                Map<String, Object> product = products.get(i);
+                Object[] row = {product.get("pname"), product.get("pprice"), product.get("pqty")};
+                
+                tablemodel.addRow(row);
+                
+                String sql3 = "SELECT * FROM inv WHERE pname ='{pqty}'";
+                String translated_sql2 = db.replaceWildcards(sql3, "{pqty}", product.get("pname"));
+                ResultSet result = db.executeSearch(translated_sql2);
+                           
+                result.next();
+                String real_qty = Integer.toString(Integer.parseInt(result.getString("pqty")) - Integer.parseInt((String) product.get("pqty")));
+                String sql4 = "UPDATE inv SET pqty = '{real_qty}' WHERE pname = '{pname}' ";
+                String translated_sql4 = db.replaceWildcards(sql4, "{real_qty}", real_qty, "{pname}", product.get("pname"));
+                db.executeStatement(translated_sql4);
+              
+                
+                
+               
+                
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(Receipt.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                   
+
+                   
                 }
                 
                 rcpt_total.setText(Double.toString(cart.getTotalPrice()));
@@ -102,13 +133,10 @@ public class Receipt extends javax.swing.JFrame {
         jLabel4.setText("CHANGE :");
 
         rcpt_total.setForeground(new java.awt.Color(245, 239, 239));
-        rcpt_total.setText("Tot");
 
         rcpt_payment.setForeground(new java.awt.Color(245, 239, 239));
-        rcpt_payment.setText("pay");
 
         rcpt_change.setForeground(new java.awt.Color(245, 239, 239));
-        rcpt_change.setText("chan");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(245, 239, 239));
@@ -213,10 +241,6 @@ public class Receipt extends javax.swing.JFrame {
 
 
     public static void main(String args[]) {
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -233,7 +257,6 @@ public class Receipt extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Receipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

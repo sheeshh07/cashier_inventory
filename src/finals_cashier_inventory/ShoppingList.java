@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package finals_cashier_inventory;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +11,7 @@ public class ShoppingList implements ShoppingListInterface{
         this.items = new ArrayList<>();
     }
 
-    // Create
+    @Override
     public void addProduct(String name, String quantity, String price) {
         Map<String, Object> item = new HashMap<>();
         item.put("pname", name);
@@ -24,11 +20,12 @@ public class ShoppingList implements ShoppingListInterface{
         items.add(item);
     }
 
-    // Read
+    @Override
     public List<Map<String, Object>> getAllProducts() {
         return items;
     }
 
+    @Override
     public Map<String, Object> getProduct(String name) {
         for (Map<String, Object> item : items) {
             if (item.get("pname").equals(name)) {
@@ -41,6 +38,7 @@ public class ShoppingList implements ShoppingListInterface{
     
     
     
+    @Override
     public boolean isExisting (String name) {
         for (Map<String, Object> item : items) {
             if (item.get("pname").equals(name)) {
@@ -50,7 +48,7 @@ public class ShoppingList implements ShoppingListInterface{
         }
         return false;
     }
-    // Update
+    @Override
     public void updateQuantity(String name, int quantity) {
         for (Map<String, Object> item : items) {
             if (item.get("pname").equals(name)) {
@@ -61,12 +59,12 @@ public class ShoppingList implements ShoppingListInterface{
         throw new IllegalArgumentException("Product not found: " + name);
     }
 
-    // Delete
+    @Override
     public void removeProduct(String name) {
         items.removeIf(item -> item.get("pname").equals(name));
     }
 
-    // Other useful methods
+    @Override
     public double getTotalPrice() {
         double totalPrice = 0;
         for (Map<String, Object> item : items) {
@@ -75,6 +73,7 @@ public class ShoppingList implements ShoppingListInterface{
         return totalPrice;
     }
 
+    @Override
     public int getTotalQuantity() {
         int totalQuantity = 0;
         for (Map<String, Object> item : items) {
@@ -83,6 +82,7 @@ public class ShoppingList implements ShoppingListInterface{
         return totalQuantity;
     }
 
+    @Override
     public void clearCart() {
         items.clear();
     }

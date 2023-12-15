@@ -91,7 +91,26 @@ public class Database implements DatabaseInterface{
     public void getProducts(){
         ResultSet result = executeSearch("SELECT * FROM inv");
         loopThroughResultSet(result);  
+    } 
+    // db.getQty(selected_text);         if (Interger.parseInt(selected_text) <= db.getQty(selected_text) ... else ... error.setText(Quantity Exceeded the Stocks)
+    public int getQty(String product_name){
+        String sql = "SELECT * FROM inv WHERE pname = \'" + product_name + "\'";
+        ResultSet result = executeSearch(sql);
+        
+        try {
+            result.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            return Integer.parseInt(result.getString("pqty"));
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
+    
      @Override
     public void addProduct(String product_name, String product_price, String product_qty){
         String sql = "INSERT INTO inv (pname, pqty, pprice) VALUES ('{pname}', '{pqty}', '{pprice}')";

@@ -234,7 +234,6 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ef" green="ef" red="f5" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Tot"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="rcpt_payment">
@@ -242,7 +241,6 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ef" green="ef" red="f5" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="pay"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="rcpt_change">
@@ -250,7 +248,6 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ef" green="ef" red="f5" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="chan"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">

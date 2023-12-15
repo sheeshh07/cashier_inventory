@@ -1,15 +1,11 @@
 package finals_cashier_inventory;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JTable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 public class productForm extends javax.swing.JFrame {
 
@@ -38,6 +34,7 @@ public class productForm extends javax.swing.JFrame {
         prdAdd = new javax.swing.JButton();
         prdUpdate = new javax.swing.JButton();
         prdDelete = new javax.swing.JButton();
+        btnAdm = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
 
@@ -145,14 +142,26 @@ public class productForm extends javax.swing.JFrame {
             }
         });
 
+        btnAdm.setBackground(new java.awt.Color(228, 212, 212));
+        btnAdm.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnAdm.setText("Cashier");
+        btnAdm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdmActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(62, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBack2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnBack2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAdm, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1151, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60))
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -215,7 +224,9 @@ public class productForm extends javax.swing.JFrame {
                 .addGap(71, 71, 71)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnBack2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBack2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdm, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
         );
 
@@ -266,23 +277,22 @@ public class productForm extends javax.swing.JFrame {
     }//GEN-LAST:event_nameActionPerformed
 
     private void prdSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prdSearchActionPerformed
-       
         Database db = new Database();
         db.connect();
         
-         try{
+        try{
 
         String sql = "SELECT * FROM inv WHERE pid = '{pid}'";
         String newsql = db.replaceWildcards(sql, "{pid}", id.getText());
         ResultSet result = db.executeSearch(newsql);
         
         if (!result.isBeforeFirst()){
+            JOptionPane.showMessageDialog(null, "Product is Not Existing!!","Product isnt existing", JOptionPane.ERROR_MESSAGE);
+
         }
         else{ 
             DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
-            
             tableModel.setRowCount(0);
-            
             
             while(result.next())
             {
@@ -306,6 +316,13 @@ public class productForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnBack2ActionPerformed
     private void prdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prdDeleteActionPerformed
+        
+        
+        
+        if (name.getText().equals("") && qty.getText().equals("") && price.getText().equals("") ){
+        JOptionPane.showMessageDialog(null, "Fill all the needed details!!","Delete", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
         Database db = new Database();
         db.connect();
 
@@ -323,10 +340,21 @@ public class productForm extends javax.swing.JFrame {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
 
         tableModel.setRowCount(0);
+        JOptionPane.showMessageDialog(null, "Product Deleted Successfully!!","Product Deleted", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        
     }//GEN-LAST:event_prdDeleteActionPerformed
 
 //GEN-FIRST:event_prdUpdateActionPerformed
     private void prdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prdUpdateActionPerformed
+       
+       
+       if (name.getText().equals("") && qty.getText().equals("") && price.getText().equals("") ){
+        JOptionPane.showMessageDialog(null, "Fill all the needed details!!","Update", JOptionPane.ERROR_MESSAGE);
+        }
+       
+       else{
        Database db = new Database();
        db.connect();
         
@@ -340,10 +368,21 @@ public class productForm extends javax.swing.JFrame {
        String sql = "UPDATE inv SET pname='{pname}', pprice='{pprice}', pqty='{pqty}' WHERE pid='{pid}'";
        String translated_sql = db.replaceWildcards(sql, "{pid}", product_id, "{pname}", product_name, "{pqty}", product_qty, "{pprice}", product_price);
        db.executeStatement(translated_sql);
+       
+       JOptionPane.showMessageDialog(null, "Product Updated Successfully!!","Product Update", JOptionPane.INFORMATION_MESSAGE);
+       }
+
     }
 //GEN-LAST:event_prdUpdateActionPerformed
 
     private void prdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prdAddActionPerformed
+        
+        
+        if (name.getText().equals("") && qty.getText().equals("") && price.getText().equals("") ){
+        JOptionPane.showMessageDialog(null, "Fill all the needed details!!","Product Added", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        else{
         Database db = new Database();
         db.connect();
 
@@ -357,11 +396,24 @@ public class productForm extends javax.swing.JFrame {
         String sql = "INSERT INTO inv (pid, pname, pprice, pqty) VALUES ('{pid}','{pname}', '{pprice}',  '{pqty}')";
         String translated_sql = db.replaceWildcards(sql, "{pid}", product_id, "{pname}", product_name, "{pqty}", product_qty, "{pprice}", product_price);
         db.executeStatement(translated_sql);
-
-        AddProductSuccess aps = new AddProductSuccess();
-        aps.setVisible(true);
+        
+        
+        JOptionPane.showMessageDialog(null, "Product Added Successfully!!","Product Added", JOptionPane.INFORMATION_MESSAGE);        
+        }
     }//GEN-LAST:event_prdAddActionPerformed
-        public static void main(String args[]) {
+
+    private void btnAdmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdmActionPerformed
+        try {
+            usersample cashier = new usersample();
+            cashier.setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(productForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_btnAdmActionPerformed
+        
+    public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -387,6 +439,7 @@ public class productForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdm;
     private javax.swing.JButton btnBack2;
     private javax.swing.JLabel forName;
     private javax.swing.JLabel forPrice;
@@ -407,20 +460,6 @@ public class productForm extends javax.swing.JFrame {
     private javax.swing.JTextField qty;
     // End of variables declaration//GEN-END:variables
 
-    private String replaceWildcards(String sql, String pname, int product_id, String product_name, String pqty, String product_qty, String pprice, String product_price, String product_price1) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private void executeStatement(String translated_sql) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private static class database {
-        public database() {
-        }
-
-        private void connect() {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-    }
+    
+    
 }

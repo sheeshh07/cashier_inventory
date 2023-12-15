@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.table.DefaultTableModel;
 
@@ -110,7 +111,7 @@ public class usersample extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Product ID", "Product Name", "Product Price", "Stocks"
+                "Product ID", "Product Name", "Product Price", "Qty"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -225,19 +226,18 @@ public class usersample extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(133, 133, 133)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(133, 133, 133)
                                 .addComponent(btnremove, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
+                                .addGap(29, 29, 29)
+                                .addComponent(btnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnqty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(36, 36, 36)
+                                .addGap(2, 2, 2)
+                                .addComponent(btnqty, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(60, 60, 60)))
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -341,7 +341,6 @@ public class usersample extends javax.swing.JFrame {
        db.connect();
        String selectedTxt = null;
        
-       //para makuha yung selected button
        Enumeration <AbstractButton> elements = buttonGroup.getElements();
        while(elements.hasMoreElements()){
             AbstractButton model = elements.nextElement();
@@ -352,8 +351,7 @@ public class usersample extends javax.swing.JFrame {
        }
        
        
-        DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
-        tablemodel.setRowCount(0);
+        
         String sql = "SELECT * FROM inv WHERE pname = '{pname}' ";
         String translatedsql = db.replaceWildcards(sql, "{pname}", selectedTxt);
         
@@ -361,10 +359,27 @@ public class usersample extends javax.swing.JFrame {
         
         try{ 
             while (result.next()){
+                int curr_qty;
+                Map<String, Object> current_product;
+                if (cart.isExisting(result.getString("pname"))){
+                     current_product = cart.getProduct(result.getString("pname"));
+                     curr_qty = Integer.parseInt(( (String) current_product.get("pqty")));
+                }
+                else{
+                    curr_qty = 0;
+                }
                 
-                // tablemodel.addRow(row);           
-                if(cart.isExisting(result.getString("pname"))){
-                Map<String, Object> current_product = cart.getProduct(result.getString("pname"));
+                
+          if(payment.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Please add payment","Payment Error", JOptionPane.ERROR_MESSAGE);
+          }
+          else{
+               if(db.getQty(selectedTxt) >= (int) btnqty.getValue() && (curr_qty + (int) btnqty.getValue()) <= db.getQty(selectedTxt) ){
+                   if(cart.isExisting(result.getString("pname"))){
+                       
+                DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
+                tablemodel.setRowCount(0);
+                current_product = cart.getProduct(result.getString("pname"));
                 int newQuantity = Integer.parseInt(current_product.get("pqty").toString()) + (int)(btnqty.getValue());
                 cart.updateQuantity(result.getString("pname"), newQuantity);
                 List<Map<String, Object>> products = cart.getAllProducts();
@@ -377,6 +392,8 @@ public class usersample extends javax.swing.JFrame {
                 
             }
             else{
+                 DefaultTableModel tablemodel = (DefaultTableModel) prodTable.getModel();
+                tablemodel.setRowCount(0);
                 cart.addProduct(result.getString("pname"),Integer.toString((int) btnqty.getValue()) , result.getString("pprice"));
                 
                 List<Map<String, Object>> products = cart.getAllProducts();
@@ -385,9 +402,18 @@ public class usersample extends javax.swing.JFrame {
                    Object[] row = {"", product.get("pname"), product.get("pprice"), product.get("pqty")};
                    tablemodel.addRow(row);
                 }
-            }                
             }
-            //
+             
+             
+         }
+         else{
+             JOptionPane.showMessageDialog(null, "Quantity is greater than available stocks","Out of Stocks", JOptionPane.ERROR_MESSAGE);
+         }
+          }
+                 
+        
+                          
+            }
             total.setText(Double.toString(cart.getTotalPrice()));         
             change.setText(Double.toString(Integer.parseInt(payment.getText()) - cart.getTotalPrice ()));
          }
@@ -395,7 +421,8 @@ public class usersample extends javax.swing.JFrame {
         
         catch (SQLException e){
             System.out.println(e);
-        }
+        }        
+        
     }//GEN-LAST:event_btnaddActionPerformed
 
     private void paymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentActionPerformed
@@ -406,6 +433,15 @@ public class usersample extends javax.swing.JFrame {
             Receipt rcpt = new Receipt(change.getText(), payment.getText(), cart);       
             rcpt.setVisible(true);
             this.dispose();
+            
+            Database db = new Database();
+            db.connect();
+       
+           /* current_product = cart.getProduct(result.getString("pname"));
+            int newQuantity = Integer.parseInt(current_product.get("pqty")) + (int)(btnqty.getValue());
+            cart.updateQuantity(result.getString("pname"), newQuantity);
+            ShoppingList upProd = new ShoppingList();
+            cart.updateQuantity(ShoppingList upProd, cart.updateQuantity); */
     }//GEN-LAST:event_checkoutActionPerformed
 
     private void clearcartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearcartActionPerformed
@@ -444,8 +480,8 @@ public class usersample extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     new usersample().setVisible(true);

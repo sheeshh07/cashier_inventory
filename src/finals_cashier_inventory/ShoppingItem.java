@@ -14,6 +14,7 @@ public class ShoppingItem {
      String pname;
      String pqty;
      String pprice;
+     
     
 
     public ShoppingItem(String pname, String pqty, String pprice) {
@@ -27,8 +28,10 @@ public class ShoppingItem {
 public boolean isProductNameExists(ShoppingItem[] shoppingList, String productName) {
     for (ShoppingItem item : shoppingList) {
         if (item != null && item.pname.equalsIgnoreCase(productName)) {
-            return true;
+        
         }
+            return true;
+            
     }
     return false;
 }

@@ -416,6 +416,11 @@ public class User extends javax.swing.JFrame {
             }
             //
             jLabel8.setText(Double.toString(cart.getTotalPrice()));
+            
+            jLabel7.setText(Double.toString(Integer.parseInt(payment.getText()) - cart.getTotalPrice ()));
+            
+            
+            
          }
         catch (SQLException e){
             System.out.println(e);
